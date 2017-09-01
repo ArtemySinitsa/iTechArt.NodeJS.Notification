@@ -8,7 +8,7 @@ import {
     USER_LOGOUT
 } from './actions/constants';
 
-import { userRegistrationRequest, userLoginRequest } from './services/api';
+import { userRegistrationRequest, userLoginRequest, userLogoutRequest } from './services/api';
 import { push } from 'react-router-redux';
 import { take, call, put, all, fork } from 'redux-saga/effects';
 
@@ -40,7 +40,10 @@ export function* logoutFlow() {
         yield fork([
             localStorage, localStorage.removeItem
         ], 'token');
-        yield put(push('/login'));
+        const response = yield call(userLogoutRequest);
+        if (response.success) {
+            yield put(push('/login'));
+        }
     }
 
 }

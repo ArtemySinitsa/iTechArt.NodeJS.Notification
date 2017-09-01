@@ -1,5 +1,5 @@
 ### Install: ###
-2. type "npm install". It will install all npm modules from package.json settings.
+type "npm install". It will install all npm modules from package.json settings.
 
 ### Commands: ###
 * "npm run build" - building to /dist folder

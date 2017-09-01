@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export function userRegistrationRequest(user) {
     return axios
-        .post('http://localhost:8080/api/users', user)
+        .post('http://localhost:8080/api/auth/register', user)
         .then((res) => ({
             ...res.data
         }))
@@ -11,7 +11,16 @@ export function userRegistrationRequest(user) {
 
 export function userLoginRequest(user) {
     return axios
-        .post('http://localhost:8080/api/auth', user)
+        .post('http://localhost:8080/api/auth/login', user)
+        .then((res) => ({
+            ...res.data
+        }))
+        .catch((error) => ({ success: false }));
+}
+
+export function userLogoutRequest(user) {
+    return axios
+        .post('http://localhost:8080/api/auth/logout')
         .then((res) => ({
             ...res.data
         }))

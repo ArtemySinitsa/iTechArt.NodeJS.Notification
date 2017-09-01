@@ -62,8 +62,8 @@ class NotificationForm extends Component {
                     <option value={1}>Minute</option>
                     <option value={1 * 60}>Hour</option>
                     <option value={1 * 60 * 24}>Day</option>
-                    <option value={1 * 60 * 30}>Month</option>
-                    <option value={1 * 60 * 30 * 365}>Year</option>
+                    <option value={1 * 60 * 24 * 30}>Month</option>
+                    <option value={1 * 60 * 24 * 30 * 365}>Year</option>
                 </TextFieldGroup>
                 <FormGroup className='d-flex justify-content-between'>
                     <Button color='primary' type='submit'>Save</Button>

@@ -10,7 +10,6 @@ export default class TaskRunner {
         MongoClient.connect(uri, (error, db) => {
             this.agenda = new Agenda().mongo(db, 'jobs');
             this.defineJob();
-
             this
                 .agenda
                 .start();

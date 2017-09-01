@@ -6,7 +6,7 @@ let router = express.Router();
 let taskRunner = new TaskRunner('mongodb://localhost:27017/notificationdb');
 
 router.post('/', (req, res) => {
-    const {id, userId, theme, message, interval} = req.body;
+    const { id, userId, theme, message, interval } = req.body;
 
     Notification
         .findById(id)
@@ -19,12 +19,11 @@ router.post('/', (req, res) => {
                     interval,
                     isRunning: false
                 }, (err, doc) => {
-                    taskRunner.stopJob(id);
+                    taskRunner.stopJob(doc._id);
                 });
-
                 res
                     .status(200)
-                    .json({success: true});
+                    .json({ success: true });
             } else {
                 Notification.create({
                     userId,
@@ -36,11 +35,11 @@ router.post('/', (req, res) => {
                     if (error) {
                         res
                             .status(400)
-                            .json({error: 'Cant save in db', notification});
+                            .json({ error: 'Cant save in db', notification });
                     } else {
                         res
                             .status(200)
-                            .json({success: true});
+                            .json({ success: true });
                     }
                 });
             }
@@ -48,9 +47,9 @@ router.post('/', (req, res) => {
 });
 
 router.get('/:id', (req, res) => {
-    const {id} = req.params;
+    const { id } = req.params;
     Notification
-        .find({userId: id})
+        .find({ userId: id })
         .exec()
         .then((notifications) => {
             const promises = [];
@@ -62,7 +61,7 @@ router.get('/:id', (req, res) => {
                 .then((data) => {
                     res
                         .status(200)
-                        .json({success: true, data: data});
+                        .json({ success: true, data: data });
                 });
 
         });
@@ -70,19 +69,37 @@ router.get('/:id', (req, res) => {
 });
 
 router.get('/item/:id', (req, res) => {
-    const {id} = req.params;
+    const { id } = req.params;
     Notification
         .findById(id)
         .exec()
         .then((notification) => {
-            res
-                .status(200)
-                .json({success: true, data: notification});
+            taskRunner.modifyNotification(id, notification).then(data => {
+                res
+                    .status(200)
+                    .json({ success: true, data });
+            })
+
+        });
+});
+
+router.get('/', (req, res) => {
+    const { id } = req.params;
+    Notification
+        .find({})
+        .exec()
+        .then((notification) => {
+            taskRunner.modifyNotification(id, notification).then(data => {
+                res
+                    .status(200)
+                    .json({ success: true, data });
+            })
+
         });
 });
 
 router.post('/item/:id', (req, res) => {
-    const {id} = req.params;
+    const { id } = req.params;
     Notification
         .findById(id)
         .exec()
@@ -99,21 +116,22 @@ router.post('/item/:id', (req, res) => {
                 .then((modifiedNotification) => {
                     res
                         .status(200)
-                        .json({success: true, data: modifiedNotification});
+                        .json({ success: true, data: modifiedNotification });
                 })
 
         });
 });
 
 router.delete('/item/:id', (req, res) => {
-    const {id} = req.params;
+    const { id } = req.params;
     Notification
         .findByIdAndRemove(id)
         .exec()
-        .then(() => {
-            res
-                .status(200)
-                .json({success: true});
+        .then((notification) => {
+            taskRunner.stopJob(notification._id);
+            res.status(200)
+                .json({ success: true });
+
         });
 });
 
