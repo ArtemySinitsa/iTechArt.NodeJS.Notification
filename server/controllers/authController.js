@@ -6,87 +6,70 @@ import User from './../models/User';
 import jwt from 'jsonwebtoken';
 
 export default class AuthController {
-    register = (req, res) => {
-        registrationValidation(req.body).then(({errors, isValid}) => {
-            userExistanceValidation(req.body, errors).then(({errors, isValid}) => {
-                if (!isValid) {
-                    this.sendResponse(res, 400, {
-                        success: false,
-                        errors
-                    });
-                } else {
-                    this
-                        .saveUser(req.body)
-                        .then((user) => {
-                            console.log(user);
-                            this.sendResponse(res, 200, {success: true});
-                        });
-                }
-            });
-        });
-    }
-
-    saveUser = ({email, password}) => {
-        var hashedPassword = passwordHash.generate(password);
-        return User.create({email: email, passwordHash: hashedPassword});
-    }
-
-    login = (req, res) => {
-        loginValidation(req.body).then(({errors, isValid}) => {
-            const {email, password} = req.body;
-            User
-                .findOne({email: email})
-                .exec()
-                .then((user) => {
-                    if (!user) {
-                        this.sendResponse(res, 400, {
-                            success: false,
-                            errors: {
-                                email: 'User does not exists'
-                            }
-                        });
-                    } else {
-                        let token = this.verifyUser(user, password);
-                        if (token) {
-                            req.session.token = token;
-                            this.sendResponse(res, 200, {
-                                success: true,
-                                token
-                            });
-                        } else {
-                            this.sendResponse(res, 400, {
-                                success: false,
-                                errors: {
-                                    password: 'Wrong password'
-                                }
-                            });
-                        }
-                    }
-                });
-        });
-    }
-
-    verifyUser = (user, password) => {
-        if (passwordHash.verify(password, user.passwordHash)) {
-            let token = jwt.sign(user, '047220ee-81ee-45ca-8960-41fe8530f556', {expiresIn: 1});
-            return token;
-        } else {
-            return;
+  register = (req, res) => {
+    registrationValidation(req.body)
+      .then(({ errors }) => userExistanceValidation(req.body, errors))
+      .then(({ errors, isValid }) => {
+        if (!isValid) {
+          res.status(400).json({ success: false, errors });
         }
-    }
+        this.saveUser(req.body)
+          .then((user) => {
+            const token = jwt.sign(user, '047220ee-81ee-45ca-8960-41fe8530f556', { expiresIn: 1 });
+            res.status(200).json({ success: true, token });
+          });
+      });
+  }
 
-    sendResponse(res, status, data) {
-        res
-            .status(status)
-            .json(data);
-    }
+  saveUser({ email, password }) {
+    const hashedPassword = passwordHash.generate(password);
+    return User.create({ email, passwordHash: hashedPassword });
+  }
 
-    logout = (req, res) => {
-        req
-            .session
-            .destroy(() => {
-                this.sendResponse(res, 200, {success: true});
+  login = (req, res) => {
+    loginValidation(req.body).then(({ errors, isValid }) => {
+      const { email, password } = req.body;
+      User.findOne({ email }).exec()
+        .then((user) => {
+          if (!user) {
+            res.status(400).json({
+              success: false,
+              errors: {
+                email: 'User does not exists',
+              },
             });
-    }
+          } else {
+            const token = this.verifyUser(user, password);
+            if (token) {
+              req.session.token = token;
+              res.status(200).json({
+                success: true,
+                token,
+              });
+            } else {
+              res.status(400).json({
+                success: false,
+                errors: {
+                  password: 'Wrong password',
+                },
+              });
+            }
+          }
+        });
+    });
+  }
 
-};
+  verifyUser = (user, password) => {
+    if (passwordHash.verify(password, user.passwordHash)) {
+      const token = jwt.sign(user, '047220ee-81ee-45ca-8960-41fe8530f556', { expiresIn: 1 });
+      return token;
+    }
+  }
+
+
+  logout(req, res) {
+    req.session.destroy(() => {
+      this.sendResponse(res, 200, { success: true });
+    });
+  }
+}

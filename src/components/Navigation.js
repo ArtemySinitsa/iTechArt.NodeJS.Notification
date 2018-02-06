@@ -1,64 +1,67 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { push } from 'react-router-redux';
-import { USER_LOGOUT } from './../authorization/actions/constants';
-import {
-    Navbar,
-    Button,
-    NavbarToggler,
-    NavbarBrand,
-    Collapse,
-    Nav,
-    NavItem,
-    NavLink
-} from 'reactstrap';
-
-const mapStateToProps = (state) => ({ isAuth: state.users.isAuth });
+import { Navbar, NavbarToggler, NavbarBrand, Collapse, Nav, NavItem, NavLink } from 'reactstrap';
 
 class Navigation extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isOpen: false
-        };
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      isOpen: false,
+    };
+  }
 
-    toggle = () => {
-        this.setState({
-            isOpen: !this.state.isOpen
-        });
-    }
+  get privateNav() {
+    return (
+      <Nav className="ml-auto" navbar>
+        <NavItem hidden={!this.props.isAuth}>
+          <NavLink tag={Link} to="/notification">Notification</NavLink>
+        </NavItem>
+        <NavItem hidden={!this.props.isAuth}>
+          <NavLink tag={Link} to="/dashboard">Dashboard</NavLink>
+        </NavItem>
+        <NavItem hidden={!this.props.isAuth}>
+          <NavLink role="button" onClick={() => this.props.logout()}>Log out</NavLink>
+        </NavItem>
+      </Nav>
+    );
+  }
 
-    render() {
-        return (
-            <Navbar color="faded" light toggleable>
-                <NavbarToggler right onClick={this.toggle} />
-                <NavbarBrand href="/">Notifications</NavbarBrand>
-                <Collapse isOpen={this.state.isOpen} navbar>
-                    <Nav className="ml-auto" navbar>
-                        <NavItem>
-                            <NavLink tag={Link} to='/notification'>Notification</NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink tag={Link} to='/dashboard'>Dashboard</NavLink>
-                        </NavItem>
-                        <NavItem hidden={!this.props.isAuth}>
-                            <NavLink role='button' onClick={() => this.props.dispatch({ type: USER_LOGOUT })}>Log out</NavLink>
-                        </NavItem>
-                        <NavItem hidden={this.props.isAuth}>
-                            <NavLink tag={Link} to='/login'>Log in</NavLink>
-                        </NavItem>
-                        <NavItem hidden={this.props.isAuth}>
-                            <NavLink tag={Link} to='/registration'>Register</NavLink>
-                        </NavItem>
-                    </Nav>
-                </Collapse>
+  get publicNav() {
+    return (
+      <Nav className="ml-auto" navbar>
+        <NavItem hidden={this.props.isAuth}>
+          <NavLink tag={Link} to="/login">Log in</NavLink>
+        </NavItem>
+        <NavItem hidden={this.props.isAuth}>
+          <NavLink tag={Link} to="/registration">Register</NavLink>
+        </NavItem>
+      </Nav>
+    );
+  }
 
-            </Navbar>
-        );
-    }
+  toggle = () => {
+    this.setState({
+      isOpen: !this.state.isOpen,
+    });
+  }
+
+  render() {
+    return (
+      <Navbar color="faded" light toggleable>
+        <NavbarToggler right onClick={this.toggle} />
+        <NavbarBrand href="/">Notifications</NavbarBrand>
+        <Collapse isOpen={this.state.isOpen} navbar >
+          {this.props.isAuth ? this.privateNav : this.publicNav}
+        </Collapse>
+      </Navbar>
+    );
+  }
 }
 
-export default connect(mapStateToProps)(Navigation);
+Navigation.propTypes = {
+  logout: PropTypes.func.isRequired,
+  isAuth: PropTypes.bool.isRequired,
+};
+
+export default Navigation;

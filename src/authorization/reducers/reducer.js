@@ -1,37 +1,38 @@
-import * as types from './../actions/constants';
-import * as actions from './../actions';
+import { handleActions } from 'redux-actions';
+import { actionsCreator } from './../actions';
 
-export const userReducer = (state = {}, action) => {
-    switch (action.type) {
-        case types.USER_REGISTRATION_REQUEST_SUCCESS:
-            return {
-                ...state,
-                errors: {}
-            };
-        case types.USER_REGISTRATION_REQUEST_FAIL:
-            return {
-                ...state,
-                errors: action.errors
-            };
-        case types.USER_LOGIN_REQUEST_FAIL:
-            return {
-                ...state,
-                errors: action.errors
-            };
-        case types.USER_LOGIN_REQUEST_SUCCESS:
-            return {
-                ...state,
-                isAuth: true,
-                errors: {}
-            };
-        case types.USER_LOGOUT:
-            {
-                return {
-                    ...state,
-                    isAuth: false
-                };
-            }
-        default:
-            return state;
-    }
-}
+const reducer = handleActions({
+  [actionsCreator.registration.requestSuccess](state, action) {
+    return {
+      ...state,
+      ...action.payload,
+      errors: {},
+    };
+  },
+  [actionsCreator.registration.requestFail](state, action) {
+    return {
+      ...state,
+      ...action.payload,
+      token: null,
+    };
+  },
+  [actionsCreator.login.requestSuccess](state, action) {
+    return {
+      ...state,
+      ...action.payload,
+      errors: {},
+    };
+  },
+  [actionsCreator.login.requestFail](state, action) {
+    return {
+      ...state,
+      ...action.payload,
+      token: null,
+    };
+  },
+}, {
+  isAuth: null,
+  errors: {},
+});
+
+export default reducer;

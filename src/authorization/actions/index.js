@@ -1,17 +1,41 @@
-import {
-    USER_REGISTRATION_REQUEST,
-    USER_REGISTRATION_REQUEST_SUCCESS,
-    USER_REGISTRATION_REQUEST_FAIL,
-    USER_LOGIN_REQUEST,
-    USER_LOGIN_REQUEST_SUCCESS,
-    USER_LOGIN_REQUEST_FAIL,
+import { createActions } from 'redux-actions';
+import { push } from 'react-router-redux';
 
-} from './constants';
+export const actionsCreator = createActions({
+  REGISTRATION: {
+    REQUEST: user => ({ user }),
+    REQUEST_SUCCESS: ({ token }) => ({ token }),
+    REQUEST_FAIL: ({ errors }) => ({ errors }),
+  },
+  LOGIN: {
+    REQUEST: user => ({ user }),
+    REQUEST_SUCCESS: ({ token }) => ({ token }),
+    REQUEST_FAIL: ({ errors }) => ({ errors }),
+  },
+});
 
-export function userRegistrationRequest(user) {
-    return { type: USER_REGISTRATION_REQUEST, user }
-}
+export const register = user => (dispatch, getState, api) => {
+  dispatch(actionsCreator.registration.request(user));
+  return api.userRegistrationRequest(user)
+    .then((response) => {
+      if (response.success) {
+        dispatch(actionsCreator.registration.requestSuccess(response));
+        localStorage.setItem('token', response.token);
+        return push('/dashboard');
+      }
+      return dispatch(actionsCreator.registration.requestFail(response));
+    });
+};
 
-export function userLoginRequest(user) {
-    return { type: USER_LOGIN_REQUEST, user }
-}
+export const login = user => (dispatch, getState, api) => {
+  dispatch(actionsCreator.login.request(user));
+  return api.userLoginRequest(user)
+    .then((response) => {
+      if (response.success) {
+        dispatch(actionsCreator.login.requestSuccess(response));
+        localStorage.setItem('token', response.token);
+        return push('/dashboard');
+      }
+      return dispatch(actionsCreator.login.requestFail(response));
+    });
+};

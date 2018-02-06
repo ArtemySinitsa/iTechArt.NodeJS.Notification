@@ -1,9 +1,9 @@
 import express from 'express';
 import NotificationController from './../controllers/notificationController';
 
-let router = express.Router();
+const router = express.Router();
 
-var notificationController = new NotificationController();
+const notificationController = new NotificationController();
 
 router.post('/', notificationController.save);
 router.get('/:id', notificationController.getUsersNotifications);
