@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Dashboard from './../components/Dashboard';
-import Panel from 'common/Panel';
+import Panel from 'common/components/Panel';
 import PropTypes from 'prop-types';
 
 import { notificationFetchRequest, notificationGetRequest, toggleNotification } from './../actions';
