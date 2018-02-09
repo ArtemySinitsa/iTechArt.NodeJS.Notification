@@ -6,11 +6,11 @@ import { createStore, compose, applyMiddleware, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import createHistory from 'history/createBrowserHistory';
 import { ConnectedRouter, routerReducer, routerMiddleware } from 'react-router-redux';
-import userReducer from './authorization/reducers/reducer';
+import userReducer from './authorization/reducers';
 import { dashboardReducer } from './dashboard/reducer/reducer';
 import { notificationReducer } from './notification/reducer/reducer';
-import Layout from './components/Layout';
-import * as api from './authorization/services/api';
+import Layout from './layout/Layout';
+import * as authApi from './authorization/api';
 
 const history = createHistory();
 const middleware = routerMiddleware(history);
@@ -24,7 +24,7 @@ const store = createStore(combineReducers({
     items: [],
   },
   notification: {},
-}, compose(applyMiddleware(middleware, thunk.withExtraArgument(api)), window.devToolsExtension
+}, compose(applyMiddleware(middleware, thunk.withExtraArgument(authApi)), window.devToolsExtension
   ? window.devToolsExtension()
   : f => f));
 

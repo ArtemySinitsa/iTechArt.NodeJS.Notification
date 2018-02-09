@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, Button } from 'reactstrap';
+import BaseForm from 'common/BaseForm';
+import TextFieldGroup from 'common/TextFieldGroup';
+import Panel from 'common/Panel';
 import validateInput from './../../../server/shared/validations/registration';
-import BaseForm from './../../components/BaseForm';
-import TextFieldGroup from './../../components/TextFieldGroup';
-import Panel from './../../components/panel/Panel';
+
 
 class RegistrationForm extends BaseForm {
   render() {

@@ -3,12 +3,24 @@ import { actionsCreator } from './../actions';
 
 const reducer = handleActions({
   [combineActions(
+    actionsCreator.registration.request,
+    actionsCreator.login.request,
+  )](state, action) {
+    return {
+      ...state,
+      ...action.payload,
+      loading: true,
+      errors: {},
+    };
+  },
+  [combineActions(
     actionsCreator.registration.requestSuccess,
     actionsCreator.login.requestSuccess,
   )](state, action) {
     return {
       ...state,
       ...action.payload,
+      loading: false,
       errors: {},
     };
   },
@@ -20,6 +32,7 @@ const reducer = handleActions({
     return {
       ...state,
       ...action.payload,
+      loading: false,
       token: null,
     };
   },
@@ -30,8 +43,9 @@ const reducer = handleActions({
     };
   },
 }, {
-  isAuth: null,
-  errors: { },
+  isAuth: false,
+  loading: false,
+  errors: {},
 });
 
 export default reducer;

@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, Button } from 'reactstrap';
-import TextFieldGroup from './../../components/TextFieldGroup';
+import TextFieldGroup from 'common/TextFieldGroup';
+import BaseForm from 'common/BaseForm';
+import Panel from 'common/Panel';
 import validateInput from './../../../server/shared/validations/login';
-import BaseForm from './../../components/BaseForm';
-import Panel from './../../components/panel/Panel';
+
 
 class LoginForm extends BaseForm {
   render() {
@@ -38,8 +39,8 @@ class LoginForm extends BaseForm {
 
 LoginForm.propTypes = {
   submit: PropTypes.func.isRequired,
-  errors: PropTypes.object,
-  initialState: PropTypes.object.isRequired,
+  errors: PropTypes.instanceOf(Object).isRequired,
+  initialState: PropTypes.instanceOf(Object).isRequired,
 };
 
 LoginForm.defaultProps = {

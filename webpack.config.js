@@ -14,6 +14,11 @@ module.exports = {
     contentBase: path.join(__dirname, '/dist'),
     historyApiFallback: true,
   },
+  resolve: {
+    alias: {
+      common: path.resolve(__dirname, 'src/common'),
+    },
+  },
   module: {
     loaders: [
       {
@@ -26,8 +31,35 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loaders: ['style', 'css'],
+        loader: 'css-loader',
       },
     ],
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+            options: { importLoaders: 1 },
+          },
+        ],
+      }, {
+        test: /.js?$/,
+        loader: 'babel-loader',
+        include: path.join(__dirname, 'src'),
+        query: {
+          presets: ['es2015', 'react', 'stage-0'],
+        },
+      }, {
+        test: /.js?$/,
+        loader: 'babel-loader',
+        include: path.join(__dirname, 'src'),
+        query: {
+          presets: ['es2015', 'react', 'stage-0'],
+        },
+      }],
   },
 };

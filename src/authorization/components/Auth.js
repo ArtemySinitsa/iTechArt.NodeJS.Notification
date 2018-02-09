@@ -1,16 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import jwtDecode from 'jwt-decode';
-import { getToken } from './../authorization/actions';
 import { bindActionCreators } from 'redux';
+import { getToken } from './../actions';
 
 export default (Wrapped) => {
   class AuthWrapper extends Component {
+    static propTypes = {
+      getToken: PropTypes.func.isRequired,
+      token: PropTypes.string,
+    }
+
+    static defaultProps = { token: '' }
+
     componentDidMount() {
       this.props.getToken();
     }
+
     render() {
       let isAuth;
       let user;
@@ -31,6 +38,6 @@ export default (Wrapped) => {
     getToken: bindActionCreators(getToken, dispatch),
   });
 
-  return withRouter(connect(mapStateToProps, mapDispatchToProps)(AuthWrapper));
+  return connect(mapStateToProps, mapDispatchToProps)(AuthWrapper);
 };
 
