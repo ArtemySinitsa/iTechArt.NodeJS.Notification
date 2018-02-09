@@ -31,7 +31,6 @@ const reducer = handleActions({
   )](state, action) {
     return {
       ...state,
-      ...action.payload,
       loading: false,
       token: null,
     };
